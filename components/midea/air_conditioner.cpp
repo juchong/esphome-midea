@@ -39,23 +39,19 @@ void AirConditioner::setup() {
   ApplianceBase<dudanov::midea::ac::AirConditioner>::setup();
   this->configure_property_queries_();
 
-  bool wants_diagnostics = false;
+  this->diagnostics_configured_ = false;
   for (const auto group : {dudanov::midea::ac::GroupId::PERFORMANCE,
                            dudanov::midea::ac::GroupId::INDOOR_FAN,
                            dudanov::midea::ac::GroupId::OUTDOOR_FAN,
                            dudanov::midea::ac::GroupId::ENERGY,
                            dudanov::midea::ac::GroupId::ENVIRONMENT,
                            dudanov::midea::ac::GroupId::OUTDOOR_POWER})
-    wants_diagnostics |= this->wants_group_(group);
+    this->diagnostics_configured_ |= this->wants_group_(group);
 
-  if (wants_diagnostics) {
-    this->query_next_group_();
+  if (this->diagnostics_configured_)
     this->set_interval("midea_diagnostics", this->diagnostic_interval_, [this]() { this->query_next_group_(); });
-  }
-  if (this->wants_properties_()) {
-    this->query_properties_();
+  if (this->wants_properties_())
     this->set_interval("midea_properties", this->property_interval_, [this]() { this->query_properties_(); });
-  }
 }
 
 void AirConditioner::on_status_change() {
@@ -158,6 +154,19 @@ void AirConditioner::on_status_change() {
   publish_binary(this->water_pump_sensor_, state.water_pump_running);
   publish_binary(this->outdoor_silent_sensor_, state.outdoor_silent);
   publish_binary(this->sound_sensor_, state.sound);
+
+  // C1 and B1 replies share this callback with C0, but only C0 can provide the
+  // operating mode. Its presence therefore proves that a C0 status frame has
+  // established the climate state. Start expanded polling exactly
+  // once from that transition; do not let an early C1/B1 reply publish the
+  // default Climate values during startup.
+  if (!this->expanded_polling_started_ && state.mode.hasValue()) {
+    this->expanded_polling_started_ = true;
+    if (this->diagnostics_configured_)
+      this->query_next_group_();
+    if (this->wants_properties_())
+      this->query_properties_();
+  }
 }
 
 bool AirConditioner::wants_group_(dudanov::midea::ac::GroupId group) const {
@@ -189,10 +198,7 @@ bool AirConditioner::wants_group_(dudanov::midea::ac::GroupId group) const {
 }
 
 void AirConditioner::query_next_group_() {
-  // Expanded replies use the same state callback as C0. Wait until a validated
-  // C0 frame has established the climate state so diagnostics cannot publish
-  // default climate values during startup.
-  if (!this->base_.hasValidatedState())
+  if (!this->expanded_polling_started_)
     return;
   static const dudanov::midea::ac::GroupId groups[] = {
       dudanov::midea::ac::GroupId::PERFORMANCE,   dudanov::midea::ac::GroupId::INDOOR_FAN,
@@ -236,7 +242,7 @@ void AirConditioner::configure_property_queries_() {
 }
 
 void AirConditioner::query_properties_() {
-  if (!this->base_.hasValidatedState())
+  if (!this->expanded_polling_started_)
     return;
   for (size_t count = 0; count < this->property_queries_.size(); ++count) {
     const size_t index = this->next_property_++ % this->property_queries_.size();
