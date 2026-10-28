@@ -67,14 +67,14 @@ CONF_APPLIANCE_ERROR = "appliance_error"
 CONF_ERROR_CODE = "error_code"
 CONF_FILTER_ALERT = "filter_alert"
 CONF_DISPLAY_ON = "display_on"
-CONF_DISPLAY_LEVEL = "display_level"
-CONF_FOLLOW_ME = "follow_me"
+CONF_C0_DISPLAY_FIELD = "c0_display_field"
+CONF_C0_BYTE_8_BIT_7 = "c0_byte_8_bit_7"
 CONF_PURIFIER = "purifier"
 CONF_AUXILIARY_HEAT = "auxiliary_heat"
 CONF_POWER_SAVING = "power_saving"
 CONF_SMART_EYE = "smart_eye"
 CONF_NATURAL_WIND = "natural_wind"
-CONF_DRY = "dry"
+CONF_C0_BYTE_9_BIT_2 = "c0_byte_9_bit_2"
 CONF_ECO_MODE = "eco_mode"
 CONF_SLEEP_MODE = "sleep_mode"
 CONF_PREVENT_COLD = "prevent_cold"
@@ -101,12 +101,9 @@ CONF_DISCHARGE_PIPE_TEMPERATURE = "discharge_pipe_temperature"
 CONF_TARGET_INDOOR_FAN_SPEED = "target_indoor_fan_speed"
 CONF_INDOOR_FAN_SPEED = "indoor_fan_speed"
 CONF_OUTDOOR_FAN_SPEED = "outdoor_fan_speed"
-CONF_INDOOR_UNIT_FAULT_FLAGS = "indoor_unit_fault_flags"
-CONF_INDOOR_UNIT_PROTECTION_FLAGS = "indoor_unit_protection_flags"
 CONF_TOTAL_ENERGY = "total_energy"
 CONF_TOTAL_OPERATING_ENERGY = "total_operating_energy"
 CONF_CURRENT_ENERGY = "current_energy"
-CONF_DEFROSTING = "defrosting"
 CONF_OUTDOOR_UNIT_POWER = "outdoor_unit_power"
 CONF_HORIZONTAL_LOUVER_ANGLE = "horizontal_louver_angle"
 CONF_VERTICAL_LOUVER_ANGLE = "vertical_louver_angle"
@@ -116,15 +113,10 @@ CONF_BREEZELESS = "breezeless"
 CONF_PROMPT_TONE = "prompt_tone"
 CONF_SELF_CLEAN = "self_clean"
 CONF_BREEZE_AWAY = "breeze_away"
-CONF_BREEZE_CONTROL = "breeze_control"
 CONF_RATE_SELECT = "rate_select"
 CONF_FRESH_AIR_SPEED = "fresh_air_speed"
 CONF_WATER_PUMP = "water_pump"
-CONF_CASCADE = "cascade"
-CONF_CASCADE_DIRECTION = "cascade_direction"
-CONF_FLASH = "flash"
 CONF_OUTDOOR_SILENT = "outdoor_silent"
-CONF_IECO = "ieco"
 CONF_SOUND = "sound"
 
 midea_ac_ns = cg.esphome_ns.namespace("midea").namespace("ac")
@@ -175,7 +167,7 @@ SENSOR_SCHEMAS = {
         UNIT_PERCENT, ICON_WATER_PERCENT, 0, DEVICE_CLASS_HUMIDITY
     ),
     CONF_ERROR_CODE: measurement_schema(icon="mdi:alert-circle-outline"),
-    CONF_DISPLAY_LEVEL: measurement_schema(icon="mdi:brightness-6"),
+    CONF_C0_DISPLAY_FIELD: measurement_schema(icon="mdi:code-braces"),
     CONF_PMV: measurement_schema(icon="mdi:thermometer-lines", accuracy=1),
     CONF_FRESH_FILTER_TOTAL: measurement_schema(icon="mdi:air-filter"),
     CONF_FRESH_FILTER_USED: measurement_schema(icon="mdi:air-filter"),
@@ -206,8 +198,6 @@ SENSOR_SCHEMAS = {
     CONF_TARGET_INDOOR_FAN_SPEED: measurement_schema("rpm", "mdi:fan", 0),
     CONF_INDOOR_FAN_SPEED: measurement_schema("rpm", "mdi:fan", 0),
     CONF_OUTDOOR_FAN_SPEED: measurement_schema("rpm", "mdi:fan", 0),
-    CONF_INDOOR_UNIT_FAULT_FLAGS: measurement_schema(icon="mdi:code-braces"),
-    CONF_INDOOR_UNIT_PROTECTION_FLAGS: measurement_schema(icon="mdi:shield-outline"),
     CONF_TOTAL_ENERGY: measurement_schema(
         UNIT_KILOWATT_HOURS,
         "mdi:counter",
@@ -230,10 +220,8 @@ SENSOR_SCHEMAS = {
     ),
     CONF_HORIZONTAL_LOUVER_ANGLE: measurement_schema("°", "mdi:angle-acute", 0),
     CONF_VERTICAL_LOUVER_ANGLE: measurement_schema("°", "mdi:angle-acute", 0),
-    CONF_BREEZE_CONTROL: measurement_schema(icon="mdi:weather-windy"),
     CONF_RATE_SELECT: measurement_schema(icon="mdi:speedometer"),
     CONF_FRESH_AIR_SPEED: measurement_schema(icon="mdi:air-filter"),
-    CONF_CASCADE_DIRECTION: measurement_schema(icon="mdi:swap-vertical"),
 }
 
 BINARY_SENSOR_SCHEMAS = {
@@ -242,8 +230,8 @@ BINARY_SENSOR_SCHEMAS = {
     CONF_DISPLAY_ON: binary_sensor.binary_sensor_schema(
         icon="mdi:television-ambient-light", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
-    CONF_FOLLOW_ME: binary_sensor.binary_sensor_schema(
-        icon="mdi:map-marker-account-outline", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
+    CONF_C0_BYTE_8_BIT_7: binary_sensor.binary_sensor_schema(
+        icon="mdi:code-braces", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
     CONF_PURIFIER: binary_sensor.binary_sensor_schema(
         icon="mdi:air-purifier", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
@@ -260,8 +248,8 @@ BINARY_SENSOR_SCHEMAS = {
     CONF_NATURAL_WIND: binary_sensor.binary_sensor_schema(
         icon="mdi:weather-windy", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
-    CONF_DRY: binary_sensor.binary_sensor_schema(
-        icon="mdi:water-percent", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
+    CONF_C0_BYTE_9_BIT_2: binary_sensor.binary_sensor_schema(
+        icon="mdi:code-braces", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
     CONF_ECO_MODE: binary_sensor.binary_sensor_schema(
         icon="mdi:leaf", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
@@ -282,9 +270,6 @@ BINARY_SENSOR_SCHEMAS = {
     CONF_FAHRENHEIT: binary_sensor.binary_sensor_schema(
         icon="mdi:temperature-fahrenheit", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
-    CONF_DEFROSTING: binary_sensor.binary_sensor_schema(
-        icon="mdi:snowflake-melt", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
-    ),
     CONF_BREEZELESS: binary_sensor.binary_sensor_schema(
         icon="mdi:weather-windy-variant", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
@@ -300,17 +285,8 @@ BINARY_SENSOR_SCHEMAS = {
     CONF_WATER_PUMP: binary_sensor.binary_sensor_schema(
         icon="mdi:pump", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
-    CONF_CASCADE: binary_sensor.binary_sensor_schema(
-        icon="mdi:swap-vertical", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
-    ),
-    CONF_FLASH: binary_sensor.binary_sensor_schema(
-        icon="mdi:flash", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
-    ),
     CONF_OUTDOOR_SILENT: binary_sensor.binary_sensor_schema(
         icon="mdi:volume-off", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
-    ),
-    CONF_IECO: binary_sensor.binary_sensor_schema(
-        icon="mdi:leaf", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
     CONF_SOUND: binary_sensor.binary_sensor_schema(
         icon="mdi:volume-high", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
@@ -548,5 +524,5 @@ async def to_code(config):
     cg.add_library(
         name="MideaUART",
         version=None,
-        repository="https://github.com/juchong/MideaUART.git#e02eea597c5c94a7dcc9cd3547d47317df3f25f7",
+        repository="https://github.com/juchong/MideaUART.git#7f5a6766e778a56fb676379a47d5f19242ebfb0a",
     )

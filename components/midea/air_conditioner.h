@@ -41,7 +41,7 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   void set_humidity_setpoint_sensor(Sensor *value) { this->humidity_setpoint_sensor_ = value; }
   void set_indoor_humidity_sensor(Sensor *value) { this->indoor_humidity_sensor_ = value; }
   void set_error_code_sensor(Sensor *value) { this->error_code_sensor_ = value; }
-  void set_display_level_sensor(Sensor *value) { this->display_level_sensor_ = value; }
+  void set_c0_display_field_sensor(Sensor *value) { this->c0_display_field_sensor_ = value; }
   void set_pmv_sensor(Sensor *value) { this->pmv_sensor_ = value; }
   void set_fresh_filter_total_sensor(Sensor *value) { this->fresh_filter_total_sensor_ = value; }
   void set_fresh_filter_used_sensor(Sensor *value) { this->fresh_filter_used_sensor_ = value; }
@@ -59,10 +59,6 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   void set_target_indoor_fan_speed_sensor(Sensor *value) { this->target_indoor_fan_speed_sensor_ = value; }
   void set_indoor_fan_speed_sensor(Sensor *value) { this->indoor_fan_speed_sensor_ = value; }
   void set_outdoor_fan_speed_sensor(Sensor *value) { this->outdoor_fan_speed_sensor_ = value; }
-  void set_indoor_unit_fault_flags_sensor(Sensor *value) { this->indoor_unit_fault_flags_sensor_ = value; }
-  void set_indoor_unit_protection_flags_sensor(Sensor *value) {
-    this->indoor_unit_protection_flags_sensor_ = value;
-  }
   void set_total_energy_sensor(Sensor *value) { this->total_energy_sensor_ = value; }
   void set_total_operating_energy_sensor(Sensor *value) { this->total_operating_energy_sensor_ = value; }
   void set_current_energy_sensor(Sensor *value) { this->current_energy_sensor_ = value; }
@@ -70,21 +66,19 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   void set_horizontal_louver_angle_sensor(Sensor *value) { this->horizontal_louver_angle_sensor_ = value; }
   void set_vertical_louver_angle_sensor(Sensor *value) { this->vertical_louver_angle_sensor_ = value; }
 
-  void set_breeze_control_sensor(Sensor *value) { this->breeze_control_sensor_ = value; }
   void set_rate_select_sensor(Sensor *value) { this->rate_select_sensor_ = value; }
   void set_fresh_air_speed_sensor(Sensor *value) { this->fresh_air_speed_sensor_ = value; }
-  void set_cascade_direction_sensor(Sensor *value) { this->cascade_direction_sensor_ = value; }
 
   void set_appliance_error_sensor(BinarySensor *value) { this->appliance_error_sensor_ = value; }
   void set_filter_alert_sensor(BinarySensor *value) { this->filter_alert_sensor_ = value; }
   void set_display_on_sensor(BinarySensor *value) { this->display_on_sensor_ = value; }
-  void set_follow_me_sensor(BinarySensor *value) { this->follow_me_sensor_ = value; }
+  void set_c0_byte_8_bit_7_sensor(BinarySensor *value) { this->c0_byte_8_bit_7_sensor_ = value; }
   void set_purifier_sensor(BinarySensor *value) { this->purifier_sensor_ = value; }
   void set_auxiliary_heat_sensor(BinarySensor *value) { this->auxiliary_heat_sensor_ = value; }
   void set_power_saving_sensor(BinarySensor *value) { this->power_saving_sensor_ = value; }
   void set_smart_eye_sensor(BinarySensor *value) { this->smart_eye_sensor_ = value; }
   void set_natural_wind_sensor(BinarySensor *value) { this->natural_wind_sensor_ = value; }
-  void set_dry_sensor(BinarySensor *value) { this->dry_sensor_ = value; }
+  void set_c0_byte_9_bit_2_sensor(BinarySensor *value) { this->c0_byte_9_bit_2_sensor_ = value; }
   void set_eco_mode_sensor(BinarySensor *value) { this->eco_mode_sensor_ = value; }
   void set_sleep_mode_sensor(BinarySensor *value) { this->sleep_mode_sensor_ = value; }
   void set_prevent_cold_sensor(BinarySensor *value) { this->prevent_cold_sensor_ = value; }
@@ -92,16 +86,12 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   void set_comfort_mode_sensor(BinarySensor *value) { this->comfort_mode_sensor_ = value; }
   void set_fresh_filter_timeout_sensor(BinarySensor *value) { this->fresh_filter_timeout_sensor_ = value; }
   void set_fahrenheit_sensor(BinarySensor *value) { this->fahrenheit_sensor_ = value; }
-  void set_defrosting_sensor(BinarySensor *value) { this->defrosting_sensor_ = value; }
   void set_breezeless_sensor(BinarySensor *value) { this->breezeless_sensor_ = value; }
   void set_prompt_tone_sensor(BinarySensor *value) { this->prompt_tone_sensor_ = value; }
   void set_self_clean_sensor(BinarySensor *value) { this->self_clean_sensor_ = value; }
   void set_breeze_away_sensor(BinarySensor *value) { this->breeze_away_sensor_ = value; }
   void set_water_pump_sensor(BinarySensor *value) { this->water_pump_sensor_ = value; }
-  void set_cascade_sensor(BinarySensor *value) { this->cascade_sensor_ = value; }
-  void set_flash_sensor(BinarySensor *value) { this->flash_sensor_ = value; }
   void set_outdoor_silent_sensor(BinarySensor *value) { this->outdoor_silent_sensor_ = value; }
-  void set_ieco_sensor(BinarySensor *value) { this->ieco_sensor_ = value; }
   void set_sound_sensor(BinarySensor *value) { this->sound_sensor_ = value; }
 
   void do_follow_me(float temperature, bool use_fahrenheit, bool beeper = false);
@@ -138,10 +128,8 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   uint32_t diagnostic_interval_{10000};
   uint32_t property_interval_{30000};
   uint8_t next_group_{};
-  uint8_t group_failures_[12]{};
   struct PropertyPoll {
     uint16_t id{};
-    uint8_t failures{};
   };
   std::vector<PropertyPoll> property_queries_{};
   size_t next_property_{};
@@ -151,7 +139,7 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   Sensor *humidity_setpoint_sensor_{};
   Sensor *indoor_humidity_sensor_{};
   Sensor *error_code_sensor_{};
-  Sensor *display_level_sensor_{};
+  Sensor *c0_display_field_sensor_{};
   Sensor *pmv_sensor_{};
   Sensor *fresh_filter_total_sensor_{};
   Sensor *fresh_filter_used_sensor_{};
@@ -168,29 +156,25 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   Sensor *target_indoor_fan_speed_sensor_{};
   Sensor *indoor_fan_speed_sensor_{};
   Sensor *outdoor_fan_speed_sensor_{};
-  Sensor *indoor_unit_fault_flags_sensor_{};
-  Sensor *indoor_unit_protection_flags_sensor_{};
   Sensor *total_energy_sensor_{};
   Sensor *total_operating_energy_sensor_{};
   Sensor *current_energy_sensor_{};
   Sensor *outdoor_unit_power_sensor_{};
   Sensor *horizontal_louver_angle_sensor_{};
   Sensor *vertical_louver_angle_sensor_{};
-  Sensor *breeze_control_sensor_{};
   Sensor *rate_select_sensor_{};
   Sensor *fresh_air_speed_sensor_{};
-  Sensor *cascade_direction_sensor_{};
 
   BinarySensor *appliance_error_sensor_{};
   BinarySensor *filter_alert_sensor_{};
   BinarySensor *display_on_sensor_{};
-  BinarySensor *follow_me_sensor_{};
+  BinarySensor *c0_byte_8_bit_7_sensor_{};
   BinarySensor *purifier_sensor_{};
   BinarySensor *auxiliary_heat_sensor_{};
   BinarySensor *power_saving_sensor_{};
   BinarySensor *smart_eye_sensor_{};
   BinarySensor *natural_wind_sensor_{};
-  BinarySensor *dry_sensor_{};
+  BinarySensor *c0_byte_9_bit_2_sensor_{};
   BinarySensor *eco_mode_sensor_{};
   BinarySensor *sleep_mode_sensor_{};
   BinarySensor *prevent_cold_sensor_{};
@@ -198,16 +182,12 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   BinarySensor *comfort_mode_sensor_{};
   BinarySensor *fresh_filter_timeout_sensor_{};
   BinarySensor *fahrenheit_sensor_{};
-  BinarySensor *defrosting_sensor_{};
   BinarySensor *breezeless_sensor_{};
   BinarySensor *prompt_tone_sensor_{};
   BinarySensor *self_clean_sensor_{};
   BinarySensor *breeze_away_sensor_{};
   BinarySensor *water_pump_sensor_{};
-  BinarySensor *cascade_sensor_{};
-  BinarySensor *flash_sensor_{};
   BinarySensor *outdoor_silent_sensor_{};
-  BinarySensor *ieco_sensor_{};
   BinarySensor *sound_sensor_{};
 };
 

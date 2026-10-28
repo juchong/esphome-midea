@@ -51,16 +51,16 @@ climate:
       name: Filter alert
     display_on:
       name: Display on
-    display_level:
-      name: Display level
+    c0_display_field:
+      name: C0 display field
     pmv:
       name: PMV
     fresh_filter_total:
       name: Fresh filter total
     fresh_filter_used:
       name: Fresh filter used
-    follow_me:
-      name: Follow me
+    c0_byte_8_bit_7:
+      name: C0 byte 8 bit 7
     purifier:
       name: Purifier
     auxiliary_heat:
@@ -71,8 +71,8 @@ climate:
       name: Smart eye
     natural_wind:
       name: Natural wind
-    dry:
-      name: Dry state
+    c0_byte_9_bit_2:
+      name: C0 byte 9 bit 2
     eco_mode:
       name: Eco mode
     sleep_mode:
@@ -113,18 +113,12 @@ climate:
       name: Indoor fan speed
     outdoor_fan_speed:
       name: Outdoor fan speed
-    indoor_unit_fault_flags:
-      name: Indoor unit fault flags
-    indoor_unit_protection_flags:
-      name: Indoor unit protection flags
     total_energy:
       name: Total energy
     total_operating_energy:
       name: Total operating energy
     current_energy:
       name: Current energy
-    defrosting:
-      name: Defrosting
     outdoor_unit_power:
       name: Outdoor unit power
     horizontal_louver_angle:
@@ -139,23 +133,13 @@ climate:
       name: Self clean
     breeze_away:
       name: Breeze away
-    breeze_control:
-      name: Breeze control
     rate_select:
       name: Rate select
     fresh_air_speed:
       name: Fresh air speed
     water_pump:
       name: Water pump
-    cascade:
-      name: Cascade
-    cascade_direction:
-      name: Cascade direction
-    flash:
-      name: Flash
     outdoor_silent:
       name: Outdoor silent
-    ieco:
-      name: iECO
     sound:
       name: Sound

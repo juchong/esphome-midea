@@ -25,7 +25,7 @@ jobs:
           python-version: "${{ matrix.python }}"
       - name: Install live ESPHome version
         if: matrix.name == 'live'
-        run: pip install "esphome==2026.6.4"
+        run: pip install "esphome==2026.10.1"
       - name: Resolve latest ESPHome release
         if: matrix.name == 'latest'
         id: latest
