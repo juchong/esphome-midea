@@ -88,9 +88,6 @@ CONF_FAHRENHEIT = "fahrenheit"
 
 # C1 data groups
 CONF_INDOOR_HUMIDITY = "indoor_humidity"
-CONF_ELECTRIFIED_HOURS = "electrified_hours"
-CONF_TOTAL_OPERATING_HOURS = "total_operating_hours"
-CONF_CURRENT_OPERATING_HOURS = "current_operating_hours"
 CONF_COMPRESSOR_FREQUENCY = "compressor_frequency"
 CONF_TARGET_COMPRESSOR_FREQUENCY = "target_compressor_frequency"
 CONF_COMPRESSOR_CURRENT = "compressor_current"
@@ -171,9 +168,6 @@ SENSOR_SCHEMAS = {
     CONF_PMV: measurement_schema(icon="mdi:thermometer-lines", accuracy=1),
     CONF_FRESH_FILTER_TOTAL: measurement_schema(icon="mdi:air-filter"),
     CONF_FRESH_FILTER_USED: measurement_schema(icon="mdi:air-filter"),
-    CONF_ELECTRIFIED_HOURS: measurement_schema("h", "mdi:clock-outline", 2),
-    CONF_TOTAL_OPERATING_HOURS: measurement_schema("h", "mdi:clock-outline", 2),
-    CONF_CURRENT_OPERATING_HOURS: measurement_schema("h", "mdi:clock-outline", 2),
     CONF_COMPRESSOR_FREQUENCY: measurement_schema(
         UNIT_HERTZ, "mdi:sine-wave", 0, DEVICE_CLASS_FREQUENCY
     ),
@@ -524,5 +518,5 @@ async def to_code(config):
     cg.add_library(
         name="MideaUART",
         version=None,
-        repository="https://github.com/juchong/MideaUART.git#7f5a6766e778a56fb676379a47d5f19242ebfb0a",
+        repository="https://github.com/juchong/MideaUART.git#a8626852029cf271c67e25de879be8881506499a",
     )

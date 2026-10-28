@@ -41,8 +41,9 @@ climate:
 
 Only configured diagnostics are queried. C1 groups are polled one at a time; B0/B1 properties
 are queried only when a property-backed entity is configured. Each property is queried by
-itself. A configured query is not retired after an arbitrary failure count. Core C0 climate
-polling is unchanged. This isolates unsupported tags and keeps
+itself. Expanded polling waits for the first validated C0 status so a C1/B1 response cannot
+publish default climate values during startup. A configured query is not retired after an
+arbitrary failure count. Core C0 climate polling is unchanged. This isolates unsupported tags and keeps
 optional protocol traffic and ESP8266 memory use proportional to the entities actually needed.
 `indoor_humidity` is sourced from C1 Group 5 and therefore opts into that query; it is not a
 passive C0 field. `humidity_setpoint`, by contrast, is carried in the ordinary C0 status reply.
@@ -52,7 +53,7 @@ The opt-in entity surface covers:
 - corroborated extended C0 state, including smart-eye, natural-wind, eco, sleep, prevent-cold,
   PMV, frost-protection, comfort-mode, and fresh-filter fields, plus explicitly named raw fields
   for disputed byte 8 bit 7, byte 9 bit 2, and the three-bit display field;
-- C1 runtime, compressor, refrigerant temperature, indoor/outdoor fan, condensate-pump,
+- C1 compressor, refrigerant temperature, indoor/outdoor fan, condensate-pump,
   energy, humidity, and outdoor-power diagnostics;
 - isolated B0/B1 polling for display state, louver angles, breezeless, prompt tone, self-clean,
   breeze-away, rate select, fresh air, outdoor-silent, and sound.

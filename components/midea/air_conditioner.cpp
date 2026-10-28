@@ -40,8 +40,7 @@ void AirConditioner::setup() {
   this->configure_property_queries_();
 
   bool wants_diagnostics = false;
-  for (const auto group : {dudanov::midea::ac::GroupId::RUNTIME,
-                           dudanov::midea::ac::GroupId::PERFORMANCE,
+  for (const auto group : {dudanov::midea::ac::GroupId::PERFORMANCE,
                            dudanov::midea::ac::GroupId::INDOOR_FAN,
                            dudanov::midea::ac::GroupId::OUTDOOR_FAN,
                            dudanov::midea::ac::GroupId::ENERGY,
@@ -133,9 +132,6 @@ void AirConditioner::on_status_change() {
   publish_binary(this->fresh_filter_timeout_sensor_, state.fresh_filter_timeout);
   publish_binary(this->fahrenheit_sensor_, state.fahrenheit);
 
-  publish_sensor(this->electrified_hours_sensor_, state.electrified_hours);
-  publish_sensor(this->total_operating_hours_sensor_, state.total_operating_hours);
-  publish_sensor(this->current_operating_hours_sensor_, state.current_operating_hours);
   publish_sensor(this->compressor_frequency_sensor_, state.compressor_frequency);
   publish_sensor(this->target_compressor_frequency_sensor_, state.target_compressor_frequency);
   publish_sensor(this->compressor_current_sensor_, state.compressor_current);
@@ -168,8 +164,7 @@ bool AirConditioner::wants_group_(dudanov::midea::ac::GroupId group) const {
   using dudanov::midea::ac::GroupId;
   switch (group) {
     case GroupId::RUNTIME:
-      return this->electrified_hours_sensor_ != nullptr || this->total_operating_hours_sensor_ != nullptr ||
-             this->current_operating_hours_sensor_ != nullptr;
+      return false;
     case GroupId::PERFORMANCE:
       return this->compressor_frequency_sensor_ != nullptr || this->target_compressor_frequency_sensor_ != nullptr ||
              this->compressor_current_sensor_ != nullptr || this->compressor_voltage_sensor_ != nullptr ||
@@ -194,10 +189,15 @@ bool AirConditioner::wants_group_(dudanov::midea::ac::GroupId group) const {
 }
 
 void AirConditioner::query_next_group_() {
+  // Expanded replies use the same state callback as C0. Wait until a validated
+  // C0 frame has established the climate state so diagnostics cannot publish
+  // default climate values during startup.
+  if (!this->base_.hasValidatedState())
+    return;
   static const dudanov::midea::ac::GroupId groups[] = {
-      dudanov::midea::ac::GroupId::RUNTIME,       dudanov::midea::ac::GroupId::PERFORMANCE,
-      dudanov::midea::ac::GroupId::INDOOR_FAN,    dudanov::midea::ac::GroupId::OUTDOOR_FAN,
-      dudanov::midea::ac::GroupId::ENERGY,        dudanov::midea::ac::GroupId::ENVIRONMENT,
+      dudanov::midea::ac::GroupId::PERFORMANCE,   dudanov::midea::ac::GroupId::INDOOR_FAN,
+      dudanov::midea::ac::GroupId::OUTDOOR_FAN,   dudanov::midea::ac::GroupId::ENERGY,
+      dudanov::midea::ac::GroupId::ENVIRONMENT,
       dudanov::midea::ac::GroupId::OUTDOOR_POWER,
   };
   for (uint8_t count = 0; count < sizeof(groups) / sizeof(groups[0]); ++count) {
@@ -236,6 +236,8 @@ void AirConditioner::configure_property_queries_() {
 }
 
 void AirConditioner::query_properties_() {
+  if (!this->base_.hasValidatedState())
+    return;
   for (size_t count = 0; count < this->property_queries_.size(); ++count) {
     const size_t index = this->next_property_++ % this->property_queries_.size();
     auto &poll = this->property_queries_[index];

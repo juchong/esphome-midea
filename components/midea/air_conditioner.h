@@ -46,9 +46,6 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   void set_fresh_filter_total_sensor(Sensor *value) { this->fresh_filter_total_sensor_ = value; }
   void set_fresh_filter_used_sensor(Sensor *value) { this->fresh_filter_used_sensor_ = value; }
 
-  void set_electrified_hours_sensor(Sensor *value) { this->electrified_hours_sensor_ = value; }
-  void set_total_operating_hours_sensor(Sensor *value) { this->total_operating_hours_sensor_ = value; }
-  void set_current_operating_hours_sensor(Sensor *value) { this->current_operating_hours_sensor_ = value; }
   void set_compressor_frequency_sensor(Sensor *value) { this->compressor_frequency_sensor_ = value; }
   void set_target_compressor_frequency_sensor(Sensor *value) { this->target_compressor_frequency_sensor_ = value; }
   void set_compressor_current_sensor(Sensor *value) { this->compressor_current_sensor_ = value; }
@@ -143,9 +140,6 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   Sensor *pmv_sensor_{};
   Sensor *fresh_filter_total_sensor_{};
   Sensor *fresh_filter_used_sensor_{};
-  Sensor *electrified_hours_sensor_{};
-  Sensor *total_operating_hours_sensor_{};
-  Sensor *current_operating_hours_sensor_{};
   Sensor *compressor_frequency_sensor_{};
   Sensor *target_compressor_frequency_sensor_{};
   Sensor *compressor_current_sensor_{};

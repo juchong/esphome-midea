@@ -87,12 +87,6 @@ climate:
       name: Fresh filter timeout
     fahrenheit:
       name: Fahrenheit mode
-    electrified_hours:
-      name: Electrified hours
-    total_operating_hours:
-      name: Total operating hours
-    current_operating_hours:
-      name: Current operating hours
     compressor_frequency:
       name: Compressor frequency
     target_compressor_frequency:
