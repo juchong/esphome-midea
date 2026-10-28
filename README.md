@@ -59,11 +59,12 @@ The opt-in entity surface covers:
 The library preserves valid unknown B5 and B0/B1 records for future interpretation. It does
 not expose a guessed entity name merely because a tag or non-zero byte exists.
 
-The component does not yet claim an “opposing mode disabled” Boolean because the protocol
-evidence does not establish one. Compressor actual/target frequency, outdoor-unit power,
-appliance-error state, error code, defrost state, coil temperatures, and fan speeds are exposed
-independently so a bounded hardware qualification can establish the signature without encoding
-an unvalidated inference into firmware.
+The component does not expose a generic “opposing mode disabled” Boolean. A bounded test on a
+two-head MRCOOL system found that the denied head sets `appliance_error` while `error_code`
+remains zero, then clears the flag when the conflict is removed. That is model-qualified
+evidence, not a universal reinterpretation of a generic appliance-error bit. Device-specific
+firmware may compose those two exposed entities into a mode-conflict indicator after qualifying
+its own hardware; the shared component keeps the protocol fields separate and truthful.
 
 The byte-level coverage contract, evidence levels, property vocabulary, and intentionally
 unimplemented model-specific families are documented in
