@@ -124,8 +124,6 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   bool frost_protection_set_{false};
   uint32_t diagnostic_interval_{10000};
   uint32_t property_interval_{30000};
-  bool diagnostics_configured_{};
-  bool expanded_polling_started_{};
   uint8_t next_group_{};
   struct PropertyPoll {
     uint16_t id{};

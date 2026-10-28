@@ -41,9 +41,10 @@ climate:
 
 Only configured diagnostics are queried. C1 groups are polled one at a time; B0/B1 properties
 are queried only when a property-backed entity is configured. Each property is queried by
-itself. Expanded polling waits for the first validated C0 status so a C1/B1 response cannot
-publish default climate values during startup. A configured query is not retired after an
-arbitrary failure count. Core C0 climate polling is unchanged. This isolates unsupported tags and keeps
+itself. If an expanded reply arrives before the first C0 status, its diagnostic values are
+kept but the Climate entity is not published until C0 has supplied the real operating mode.
+A configured query is not retired after an arbitrary failure count. Core C0 climate polling
+is unchanged. This isolates unsupported tags and keeps
 optional protocol traffic and ESP8266 memory use proportional to the entities actually needed.
 `indoor_humidity` is sourced from C1 Group 5 and therefore opts into that query; it is not a
 passive C0 field. `humidity_setpoint`, by contrast, is carried in the ordinary C0 status reply.
