@@ -37,6 +37,7 @@ void AirConditioner::setup() {
   // All C1 traffic is consumer-driven by the configured entities below.
   this->base_.setPowerQuery(false);
   ApplianceBase<dudanov::midea::ac::AirConditioner>::setup();
+  this->configure_property_queries_();
 
   bool wants_diagnostics = false;
   for (const auto group : {dudanov::midea::ac::GroupId::RUNTIME,
@@ -114,16 +115,25 @@ void AirConditioner::on_status_change() {
   publish_sensor(this->indoor_humidity_sensor_, state.indoor_humidity);
   publish_sensor(this->error_code_sensor_, state.error_code);
   publish_sensor(this->display_level_sensor_, state.display_level);
+  publish_sensor(this->pmv_sensor_, state.pmv);
+  publish_sensor(this->fresh_filter_total_sensor_, state.fresh_filter_total);
+  publish_sensor(this->fresh_filter_used_sensor_, state.fresh_filter_used);
   publish_binary(this->appliance_error_sensor_, state.appliance_error);
   publish_binary(this->filter_alert_sensor_, state.filter_alert);
   publish_binary(this->display_on_sensor_, state.display_on);
   publish_binary(this->follow_me_sensor_, state.follow_me);
   publish_binary(this->purifier_sensor_, state.purifier);
   publish_binary(this->auxiliary_heat_sensor_, state.aux_heat);
-  publish_binary(this->independent_auxiliary_heat_sensor_, state.independent_aux_heat);
   publish_binary(this->power_saving_sensor_, state.power_saving);
+  publish_binary(this->smart_eye_sensor_, state.smart_eye);
   publish_binary(this->natural_wind_sensor_, state.natural_wind);
+  publish_binary(this->dry_sensor_, state.dry);
+  publish_binary(this->eco_mode_sensor_, state.eco_mode);
+  publish_binary(this->sleep_mode_sensor_, state.sleep_mode);
+  publish_binary(this->prevent_cold_sensor_, state.prevent_cold);
+  publish_binary(this->frost_protection_sensor_, state.frost_protection);
   publish_binary(this->comfort_mode_sensor_, state.comfort_mode);
+  publish_binary(this->fresh_filter_timeout_sensor_, state.fresh_filter_timeout);
   publish_binary(this->fahrenheit_sensor_, state.fahrenheit);
 
   publish_sensor(this->electrified_hours_sensor_, state.electrified_hours);
@@ -178,6 +188,7 @@ bool AirConditioner::wants_group_(dudanov::midea::ac::GroupId group) const {
              this->discharge_pipe_temperature_sensor_ != nullptr;
     case GroupId::INDOOR_FAN:
       return this->target_indoor_fan_speed_sensor_ != nullptr || this->indoor_fan_speed_sensor_ != nullptr ||
+             this->water_pump_sensor_ != nullptr ||
              this->indoor_unit_fault_flags_sensor_ != nullptr ||
              this->indoor_unit_protection_flags_sensor_ != nullptr;
     case GroupId::OUTDOOR_FAN:
@@ -220,21 +231,15 @@ void AirConditioner::query_next_group_() {
 }
 
 bool AirConditioner::wants_properties_() const {
-  return this->breezeless_sensor_ != nullptr || this->prompt_tone_sensor_ != nullptr ||
-         this->self_clean_sensor_ != nullptr || this->breeze_away_sensor_ != nullptr ||
-         this->breeze_control_sensor_ != nullptr || this->rate_select_sensor_ != nullptr ||
-         this->fresh_air_speed_sensor_ != nullptr || this->water_pump_sensor_ != nullptr ||
-         this->cascade_sensor_ != nullptr || this->cascade_direction_sensor_ != nullptr ||
-         this->flash_sensor_ != nullptr || this->outdoor_silent_sensor_ != nullptr || this->ieco_sensor_ != nullptr ||
-         this->sound_sensor_ != nullptr;
+  return !this->property_queries_.empty();
 }
 
-void AirConditioner::query_properties_() {
+void AirConditioner::configure_property_queries_() {
   using dudanov::midea::ac::PropertyId;
-  std::vector<uint16_t> ids;
-  auto add = [&ids](bool configured, PropertyId id) {
+  this->property_queries_.clear();
+  auto add = [this](bool configured, PropertyId id) {
     if (configured)
-      ids.push_back(static_cast<uint16_t>(id));
+      this->property_queries_.push_back(PropertyPoll{static_cast<uint16_t>(id), 0});
   };
   add(this->breezeless_sensor_ != nullptr, PropertyId::BREEZELESS);
   add(this->prompt_tone_sensor_ != nullptr, PropertyId::PROMPT_TONE);
@@ -249,8 +254,39 @@ void AirConditioner::query_properties_() {
   add(this->outdoor_silent_sensor_ != nullptr, PropertyId::OUTDOOR_SILENT);
   add(this->ieco_sensor_ != nullptr, PropertyId::IECO);
   add(this->sound_sensor_ != nullptr, PropertyId::SOUND);
-  if (!ids.empty())
-    this->base_.requestProperties(ids, nullptr, []() { ESP_LOGW(Constants::TAG, "B1 property query failed"); });
+}
+
+void AirConditioner::query_properties_() {
+  for (size_t count = 0; count < this->property_queries_.size(); ++count) {
+    const size_t index = this->next_property_++ % this->property_queries_.size();
+    auto &poll = this->property_queries_[index];
+    if (poll.failures >= 3)
+      continue;
+    const uint16_t id = poll.id;
+    const bool queued = this->base_.requestProperties(
+        {id},
+        [this, index, id](const std::vector<dudanov::midea::ac::PropertyValue> &values) {
+          const auto value = std::find_if(values.begin(), values.end(),
+                                          [id](const dudanov::midea::ac::PropertyValue &item) {
+                                            return item.id == id && item.successful();
+                                          });
+          if (value != values.end()) {
+            this->property_queries_[index].failures = 0;
+            return;
+          }
+          auto &failed = this->property_queries_[index].failures;
+          if (++failed == 3)
+            ESP_LOGW(Constants::TAG,
+                     "B1 property 0x%04X returned no usable value; stopping this query until reboot", id);
+        },
+        [this, index, id]() {
+          auto &failed = this->property_queries_[index].failures;
+          if (++failed == 3)
+            ESP_LOGW(Constants::TAG, "B1 property 0x%04X did not answer; stopping this query until reboot", id);
+        });
+    if (queued)
+      return;
+  }
 }
 
 void AirConditioner::control(const ClimateCall &call) {

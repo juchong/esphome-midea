@@ -72,10 +72,19 @@ CONF_DISPLAY_LEVEL = "display_level"
 CONF_FOLLOW_ME = "follow_me"
 CONF_PURIFIER = "purifier"
 CONF_AUXILIARY_HEAT = "auxiliary_heat"
-CONF_INDEPENDENT_AUXILIARY_HEAT = "independent_auxiliary_heat"
 CONF_POWER_SAVING = "power_saving"
+CONF_SMART_EYE = "smart_eye"
 CONF_NATURAL_WIND = "natural_wind"
+CONF_DRY = "dry"
+CONF_ECO_MODE = "eco_mode"
+CONF_SLEEP_MODE = "sleep_mode"
+CONF_PREVENT_COLD = "prevent_cold"
+CONF_PMV = "pmv"
+CONF_FROST_PROTECTION = "frost_protection"
 CONF_COMFORT_MODE = "comfort_mode"
+CONF_FRESH_FILTER_TIMEOUT = "fresh_filter_timeout"
+CONF_FRESH_FILTER_TOTAL = "fresh_filter_total"
+CONF_FRESH_FILTER_USED = "fresh_filter_used"
 CONF_FAHRENHEIT = "fahrenheit"
 
 # C1 data groups
@@ -167,6 +176,9 @@ SENSOR_SCHEMAS = {
     ),
     CONF_ERROR_CODE: measurement_schema(icon="mdi:alert-circle-outline"),
     CONF_DISPLAY_LEVEL: measurement_schema(icon="mdi:brightness-6"),
+    CONF_PMV: measurement_schema(icon="mdi:thermometer-lines", accuracy=1),
+    CONF_FRESH_FILTER_TOTAL: measurement_schema(icon="mdi:air-filter"),
+    CONF_FRESH_FILTER_USED: measurement_schema(icon="mdi:air-filter"),
     CONF_ELECTRIFIED_HOURS: measurement_schema("h", "mdi:clock-outline", 2),
     CONF_TOTAL_OPERATING_HOURS: measurement_schema("h", "mdi:clock-outline", 2),
     CONF_CURRENT_OPERATING_HOURS: measurement_schema("h", "mdi:clock-outline", 2),
@@ -239,18 +251,34 @@ BINARY_SENSOR_SCHEMAS = {
     CONF_AUXILIARY_HEAT: binary_sensor.binary_sensor_schema(
         icon="mdi:radiator", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
-    CONF_INDEPENDENT_AUXILIARY_HEAT: binary_sensor.binary_sensor_schema(
-        icon="mdi:radiator", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
-    ),
     CONF_POWER_SAVING: binary_sensor.binary_sensor_schema(
         icon="mdi:leaf", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
+    ),
+    CONF_SMART_EYE: binary_sensor.binary_sensor_schema(
+        icon="mdi:eye-outline", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
     CONF_NATURAL_WIND: binary_sensor.binary_sensor_schema(
         icon="mdi:weather-windy", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
+    CONF_DRY: binary_sensor.binary_sensor_schema(
+        icon="mdi:water-percent", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
+    ),
+    CONF_ECO_MODE: binary_sensor.binary_sensor_schema(
+        icon="mdi:leaf", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
+    ),
+    CONF_SLEEP_MODE: binary_sensor.binary_sensor_schema(
+        icon="mdi:sleep", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
+    ),
+    CONF_PREVENT_COLD: binary_sensor.binary_sensor_schema(
+        icon="mdi:snowflake-off", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
+    ),
+    CONF_FROST_PROTECTION: binary_sensor.binary_sensor_schema(
+        icon="mdi:snowflake-thermometer", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
+    ),
     CONF_COMFORT_MODE: binary_sensor.binary_sensor_schema(
         icon="mdi:sofa-outline", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
+    CONF_FRESH_FILTER_TIMEOUT: problem_schema("mdi:air-filter"),
     CONF_FAHRENHEIT: binary_sensor.binary_sensor_schema(
         icon="mdi:temperature-fahrenheit", entity_category=ENTITY_CATEGORY_DIAGNOSTIC
     ),
@@ -520,5 +548,5 @@ async def to_code(config):
     cg.add_library(
         name="MideaUART",
         version=None,
-        repository="https://github.com/juchong/MideaUART.git#b7c62f5e56ead95f4caa7ab1b9de8ad688267987",
+        repository="https://github.com/juchong/MideaUART.git#0c0a872a342e9d3e70059e0fda6a46209dcd944f",
     )

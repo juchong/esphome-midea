@@ -40,14 +40,32 @@ climate:
 ```
 
 Only configured diagnostics are queried. C1 groups are polled one at a time; B0/B1 properties
-are queried only when a property-backed entity is configured. Core C0 climate polling is
-unchanged. This keeps optional protocol traffic and ESP8266 memory use proportional to the
-entities actually needed.
+are queried only when a property-backed entity is configured. Each property is queried by
+itself, and only an individual property is retired after three empty, failed, or timed-out
+responses. Core C0 climate polling is unchanged. This isolates unsupported tags and keeps
+optional protocol traffic and ESP8266 memory use proportional to the entities actually needed.
 
-The component does not claim an “opposing mode disabled” Boolean because the protocol evidence
-does not establish one. Compressor actual/target frequency, outdoor-unit power, appliance-error
-state, error code, defrost state, coil temperatures, and fan speeds are exposed independently so
-the real signature can be observed without encoding an unvalidated inference into firmware.
+The opt-in entity surface covers:
+
+- extended C0 state, including smart-eye, natural-wind, dry, eco, sleep, prevent-cold, PMV,
+  frost-protection, comfort-mode, and fresh-filter fields;
+- C1 runtime, compressor, refrigerant temperature, indoor/outdoor fan, condensate-pump,
+  energy, humidity, defrost, outdoor-power, and louver diagnostics;
+- isolated B0/B1 polling for breezeless, prompt tone, self-clean, breeze controls, rate
+  select, fresh air, water pump, cascade, flash, outdoor-silent, iECO, and sound.
+
+The library preserves valid unknown B5 and B0/B1 records for future interpretation. It does
+not expose a guessed entity name merely because a tag or non-zero byte exists.
+
+The component does not yet claim an “opposing mode disabled” Boolean because the protocol
+evidence does not establish one. Compressor actual/target frequency, outdoor-unit power,
+appliance-error state, error code, defrost state, coil temperatures, and fan speeds are exposed
+independently so a bounded hardware qualification can establish the signature without encoding
+an unvalidated inference into firmware.
+
+The byte-level coverage contract, evidence levels, property vocabulary, and intentionally
+unimplemented model-specific families are documented in
+[`MideaUART/docs/air-conditioner-protocol.md`](https://github.com/juchong/MideaUART/blob/rearchitecture/docs/air-conditioner-protocol.md).
 
 ## Energy encoding
 
@@ -61,6 +79,7 @@ the real signature can be observed without encoding an unvalidated inference int
 
 ## Validation
 
-CI compiles the full entity surface for an actual `esp12e` target against ESPHome 2026.6.4 and
-the newest ESPHome release available on PyPI. The latest-version job also runs weekly so a future
-ESPHome change is detected even when this repository has not changed.
+CI validates and compiles the full entity surface for an actual `esp12e` target against ESPHome
+2026.6.4 and the latest tagged ESPHome GitHub release. The latest-version job also runs weekly,
+so a future ESPHome change is detected even when this repository has not changed. The component
+pins MideaUART to an exact commit; the pin is advanced only after the library tests pass.

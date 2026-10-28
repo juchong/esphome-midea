@@ -53,20 +53,38 @@ climate:
       name: Display on
     display_level:
       name: Display level
+    pmv:
+      name: PMV
+    fresh_filter_total:
+      name: Fresh filter total
+    fresh_filter_used:
+      name: Fresh filter used
     follow_me:
       name: Follow me
     purifier:
       name: Purifier
     auxiliary_heat:
       name: Auxiliary heat
-    independent_auxiliary_heat:
-      name: Independent auxiliary heat
     power_saving:
       name: Power saving
+    smart_eye:
+      name: Smart eye
     natural_wind:
       name: Natural wind
+    dry:
+      name: Dry state
+    eco_mode:
+      name: Eco mode
+    sleep_mode:
+      name: Sleep mode
+    prevent_cold:
+      name: Prevent cold air
+    frost_protection:
+      name: Frost protection
     comfort_mode:
       name: Comfort mode
+    fresh_filter_timeout:
+      name: Fresh filter timeout
     fahrenheit:
       name: Fahrenheit mode
     electrified_hours:

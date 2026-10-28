@@ -4,6 +4,8 @@
 
 #include <Appliance/AirConditioner/AirConditioner.h>
 
+#include <vector>
+
 #include "appliance_base.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/sensor/sensor.h"
@@ -40,6 +42,9 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   void set_indoor_humidity_sensor(Sensor *value) { this->indoor_humidity_sensor_ = value; }
   void set_error_code_sensor(Sensor *value) { this->error_code_sensor_ = value; }
   void set_display_level_sensor(Sensor *value) { this->display_level_sensor_ = value; }
+  void set_pmv_sensor(Sensor *value) { this->pmv_sensor_ = value; }
+  void set_fresh_filter_total_sensor(Sensor *value) { this->fresh_filter_total_sensor_ = value; }
+  void set_fresh_filter_used_sensor(Sensor *value) { this->fresh_filter_used_sensor_ = value; }
 
   void set_electrified_hours_sensor(Sensor *value) { this->electrified_hours_sensor_ = value; }
   void set_total_operating_hours_sensor(Sensor *value) { this->total_operating_hours_sensor_ = value; }
@@ -76,12 +81,16 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   void set_follow_me_sensor(BinarySensor *value) { this->follow_me_sensor_ = value; }
   void set_purifier_sensor(BinarySensor *value) { this->purifier_sensor_ = value; }
   void set_auxiliary_heat_sensor(BinarySensor *value) { this->auxiliary_heat_sensor_ = value; }
-  void set_independent_auxiliary_heat_sensor(BinarySensor *value) {
-    this->independent_auxiliary_heat_sensor_ = value;
-  }
   void set_power_saving_sensor(BinarySensor *value) { this->power_saving_sensor_ = value; }
+  void set_smart_eye_sensor(BinarySensor *value) { this->smart_eye_sensor_ = value; }
   void set_natural_wind_sensor(BinarySensor *value) { this->natural_wind_sensor_ = value; }
+  void set_dry_sensor(BinarySensor *value) { this->dry_sensor_ = value; }
+  void set_eco_mode_sensor(BinarySensor *value) { this->eco_mode_sensor_ = value; }
+  void set_sleep_mode_sensor(BinarySensor *value) { this->sleep_mode_sensor_ = value; }
+  void set_prevent_cold_sensor(BinarySensor *value) { this->prevent_cold_sensor_ = value; }
+  void set_frost_protection_sensor(BinarySensor *value) { this->frost_protection_sensor_ = value; }
   void set_comfort_mode_sensor(BinarySensor *value) { this->comfort_mode_sensor_ = value; }
+  void set_fresh_filter_timeout_sensor(BinarySensor *value) { this->fresh_filter_timeout_sensor_ = value; }
   void set_fahrenheit_sensor(BinarySensor *value) { this->fahrenheit_sensor_ = value; }
   void set_defrosting_sensor(BinarySensor *value) { this->defrosting_sensor_ = value; }
   void set_breezeless_sensor(BinarySensor *value) { this->breezeless_sensor_ = value; }
@@ -118,6 +127,7 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   ClimateTraits traits() override;
   void query_next_group_();
   void query_properties_();
+  void configure_property_queries_();
   bool wants_group_(dudanov::midea::ac::GroupId group) const;
   bool wants_properties_() const;
 
@@ -129,6 +139,12 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   uint32_t property_interval_{30000};
   uint8_t next_group_{};
   uint8_t group_failures_[12]{};
+  struct PropertyPoll {
+    uint16_t id{};
+    uint8_t failures{};
+  };
+  std::vector<PropertyPoll> property_queries_{};
+  size_t next_property_{};
 
   Sensor *outdoor_temperature_sensor_{};
   Sensor *power_usage_sensor_{};
@@ -136,6 +152,9 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   Sensor *indoor_humidity_sensor_{};
   Sensor *error_code_sensor_{};
   Sensor *display_level_sensor_{};
+  Sensor *pmv_sensor_{};
+  Sensor *fresh_filter_total_sensor_{};
+  Sensor *fresh_filter_used_sensor_{};
   Sensor *electrified_hours_sensor_{};
   Sensor *total_operating_hours_sensor_{};
   Sensor *current_operating_hours_sensor_{};
@@ -168,10 +187,16 @@ class AirConditioner final : public ApplianceBase<dudanov::midea::ac::AirConditi
   BinarySensor *follow_me_sensor_{};
   BinarySensor *purifier_sensor_{};
   BinarySensor *auxiliary_heat_sensor_{};
-  BinarySensor *independent_auxiliary_heat_sensor_{};
   BinarySensor *power_saving_sensor_{};
+  BinarySensor *smart_eye_sensor_{};
   BinarySensor *natural_wind_sensor_{};
+  BinarySensor *dry_sensor_{};
+  BinarySensor *eco_mode_sensor_{};
+  BinarySensor *sleep_mode_sensor_{};
+  BinarySensor *prevent_cold_sensor_{};
+  BinarySensor *frost_protection_sensor_{};
   BinarySensor *comfort_mode_sensor_{};
+  BinarySensor *fresh_filter_timeout_sensor_{};
   BinarySensor *fahrenheit_sensor_{};
   BinarySensor *defrosting_sensor_{};
   BinarySensor *breezeless_sensor_{};
