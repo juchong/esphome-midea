@@ -63,7 +63,6 @@ CONF_PROPERTY_INTERVAL = "property_interval"
 CONF_POWER_FORMAT = "power_format"
 
 # C0 state
-CONF_INDOOR_HUMIDITY = "indoor_humidity"
 CONF_APPLIANCE_ERROR = "appliance_error"
 CONF_ERROR_CODE = "error_code"
 CONF_FILTER_ALERT = "filter_alert"
@@ -88,6 +87,7 @@ CONF_FRESH_FILTER_USED = "fresh_filter_used"
 CONF_FAHRENHEIT = "fahrenheit"
 
 # C1 data groups
+CONF_INDOOR_HUMIDITY = "indoor_humidity"
 CONF_ELECTRIFIED_HOURS = "electrified_hours"
 CONF_TOTAL_OPERATING_HOURS = "total_operating_hours"
 CONF_CURRENT_OPERATING_HOURS = "current_operating_hours"

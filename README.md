@@ -44,6 +44,8 @@ are queried only when a property-backed entity is configured. Each property is q
 itself, and only an individual property is retired after three empty, failed, or timed-out
 responses. Core C0 climate polling is unchanged. This isolates unsupported tags and keeps
 optional protocol traffic and ESP8266 memory use proportional to the entities actually needed.
+`indoor_humidity` is sourced from C1 Group 5 and therefore opts into that query; it is not a
+passive C0 field. `humidity_setpoint`, by contrast, is carried in the ordinary C0 status reply.
 
 The opt-in entity surface covers:
 
