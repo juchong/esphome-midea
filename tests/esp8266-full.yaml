@@ -1,0 +1,143 @@
+esphome:
+  name: midea-esp8266-ci
+
+esp8266:
+  board: esp12e
+  framework:
+    version: recommended
+
+external_components:
+  - source:
+      type: local
+      path: ../components
+    components: [midea]
+
+logger:
+  baud_rate: 0
+
+wifi:
+  ssid: "compile-test"
+  password: "compile-test-password"
+
+uart:
+  id: midea_uart
+  tx_pin: GPIO1
+  rx_pin: GPIO3
+  baud_rate: 9600
+
+climate:
+  - platform: midea
+    id: test_midea
+    name: Test Midea
+    uart_id: midea_uart
+    autoconf: true
+    beeper: false
+    diagnostic_interval: 10s
+    property_interval: 30s
+    power_format: BCD
+    outdoor_temperature:
+      name: Outdoor temperature
+    power_usage:
+      name: Realtime power
+    humidity_setpoint:
+      name: Target humidity
+    indoor_humidity:
+      name: Indoor humidity
+    appliance_error:
+      name: Appliance error
+    error_code:
+      name: Error code
+    filter_alert:
+      name: Filter alert
+    display_on:
+      name: Display on
+    display_level:
+      name: Display level
+    follow_me:
+      name: Follow me
+    purifier:
+      name: Purifier
+    auxiliary_heat:
+      name: Auxiliary heat
+    independent_auxiliary_heat:
+      name: Independent auxiliary heat
+    power_saving:
+      name: Power saving
+    natural_wind:
+      name: Natural wind
+    comfort_mode:
+      name: Comfort mode
+    fahrenheit:
+      name: Fahrenheit mode
+    electrified_hours:
+      name: Electrified hours
+    total_operating_hours:
+      name: Total operating hours
+    current_operating_hours:
+      name: Current operating hours
+    compressor_frequency:
+      name: Compressor frequency
+    target_compressor_frequency:
+      name: Target compressor frequency
+    compressor_current:
+      name: Compressor current
+    compressor_voltage:
+      name: Compressor voltage
+    indoor_coil_temperature:
+      name: Indoor coil temperature
+    outdoor_coil_temperature:
+      name: Outdoor coil temperature
+    discharge_pipe_temperature:
+      name: Discharge pipe temperature
+    target_indoor_fan_speed:
+      name: Target indoor fan speed
+    indoor_fan_speed:
+      name: Indoor fan speed
+    outdoor_fan_speed:
+      name: Outdoor fan speed
+    indoor_unit_fault_flags:
+      name: Indoor unit fault flags
+    indoor_unit_protection_flags:
+      name: Indoor unit protection flags
+    total_energy:
+      name: Total energy
+    total_operating_energy:
+      name: Total operating energy
+    current_energy:
+      name: Current energy
+    defrosting:
+      name: Defrosting
+    outdoor_unit_power:
+      name: Outdoor unit power
+    horizontal_louver_angle:
+      name: Horizontal louver angle
+    vertical_louver_angle:
+      name: Vertical louver angle
+    breezeless:
+      name: Breezeless
+    prompt_tone:
+      name: Prompt tone
+    self_clean:
+      name: Self clean
+    breeze_away:
+      name: Breeze away
+    breeze_control:
+      name: Breeze control
+    rate_select:
+      name: Rate select
+    fresh_air_speed:
+      name: Fresh air speed
+    water_pump:
+      name: Water pump
+    cascade:
+      name: Cascade
+    cascade_direction:
+      name: Cascade direction
+    flash:
+      name: Flash
+    outdoor_silent:
+      name: Outdoor silent
+    ieco:
+      name: iECO
+    sound:
+      name: Sound

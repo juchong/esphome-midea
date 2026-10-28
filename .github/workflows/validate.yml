@@ -1,0 +1,41 @@
+name: Validate ESPHome component
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 9 * * 1"
+
+jobs:
+  esp8266:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: live
+            python: "3.11"
+          - name: latest
+            python: "3.12"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "${{ matrix.python }}"
+      - name: Install live ESPHome version
+        if: matrix.name == 'live'
+        run: pip install "esphome==2026.6.4"
+      - name: Resolve latest ESPHome release
+        if: matrix.name == 'latest'
+        id: latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: echo "tag=$(gh api repos/esphome/esphome/releases/latest --jq .tag_name)" >> "$GITHUB_OUTPUT"
+      - name: Install latest ESPHome release
+        if: matrix.name == 'latest'
+        run: pip install "https://github.com/esphome/esphome/archive/refs/tags/${{ steps.latest.outputs.tag }}.tar.gz"
+      - name: Validate configuration
+        run: esphome config tests/esp8266-full.yaml
+      - name: Compile ESP-12E firmware
+        run: esphome compile tests/esp8266-full.yaml
