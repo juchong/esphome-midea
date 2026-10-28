@@ -520,5 +520,5 @@ async def to_code(config):
     cg.add_library(
         name="MideaUART",
         version=None,
-        repository="https://github.com/juchong/MideaUART.git#fa7df0763eb36432e60a9721ea5734adeb3086ab",
+        repository="https://github.com/juchong/MideaUART.git#0cc439bab979e14a6b65e43c2412a614cceeab10",
     )
