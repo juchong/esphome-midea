@@ -64,9 +64,17 @@ not expose a guessed entity name merely because a tag or non-zero byte exists.
 
 The component does not expose a generic “opposing mode disabled” Boolean. A bounded test on a
 two-head MRCOOL system found that the denied head sets `appliance_error` while `error_code`
-remains zero, then clears the flag when the conflict is removed. That is model-qualified
-candidate signature, not a universal reinterpretation of a generic appliance-error bit. The
-shared component keeps the protocol fields separate and truthful.
+remains zero. In a later isolated-head test, turning only the other head off left every setting
+on the denied Office head unchanged; the flag cleared on the next C0 cycle and that head began
+actively cooling. That is a model-qualified candidate signature, not a universal
+reinterpretation of a generic appliance-error bit. The shared component keeps the protocol
+fields separate and truthful so a deployment can derive an explicitly model-scoped sensor.
+
+Optional support is also head-specific. On the same installation, the Loft head returned live
+C1 Groups 1–3 while the different-capacity Office head returned none, even after isolation had
+cleared its inhibit flag and it was actively cooling. Both heads continued to answer C0 and the
+qualified B1 display/louver properties. An unanswered C1 entity therefore remains unknown; it
+does not block climate publication or imply a transport failure.
 
 The byte-level coverage contract, evidence levels, property vocabulary, and intentionally
 unimplemented model-specific families are documented in
